@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors')
 const app =express();
+const jwt = require('jsonwebtoken');
 const port = process.env.PORT || 5000
+
 require('dotenv').config()
 //middleware
 app.use(cors())
@@ -31,7 +33,29 @@ async function run() {
    //all database collection
    const userCollection = client.db("messManageDB").collection("users")
 
+ //jwt related api
+ app.post('/jwt',async(req,res)=>{
+  const user =req.body
+  const token =jwt.sign(user,process.env.ACCESS_TOKEN_SECRET,{expiresIn:'24h'})
+  res.send({token})
+})
 
+//verify token milldlewares
+
+const verifyToken =(req,res,next)=>{
+  console.log('inside verfiy token',req.headers);
+  if(!req.headers.authorization){
+    return res.status(401).send({message: 'forbidden access'})
+  }
+  const token = req.headers.authorization.split(' ')[1]
+  jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err,decoded)=>{
+    if(err){
+      return res.status(401).send({message: 'forbidden access'})
+    }
+    req.decoded =decoded
+    next()
+  })
+}
 
    //users related api
    app.post('/users',async(req,res)=>{
@@ -65,7 +89,7 @@ app.get('/users/admin/:email',async(req,res)=>{
 //make admin
 
 //admin made api
-app.patch('/users/admin/:id',async(req,res)=>{
+app.patch('/users/admin/:id',verifyToken,async(req,res)=>{
   const id = req.params.id
   const filter= {_id: new ObjectId(id)}
 const updatedDoc ={
@@ -78,7 +102,7 @@ res.send(result)
 })
 
 // delete users 
-app.delete('/users/:email',async(req,res)=>{
+app.delete('/users/:email',verifyToken,async(req,res)=>{
   const email = req.params.email
   const query= {email: email}
   const result = await userCollection.deleteOne(query)
