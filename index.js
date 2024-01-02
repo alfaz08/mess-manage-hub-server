@@ -11,7 +11,7 @@ console.log(process.env.DB_USER);
 console.log(process.env.DB_PASS);
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.fpdogwm.mongodb.net/?retryWrites=true&w=majority`;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -60,6 +60,29 @@ app.get('/users/admin/:email',async(req,res)=>{
     admin=user?.roll==='admin'
   }
   res.send({admin})
+})
+
+//make admin
+
+//admin made api
+app.patch('/users/admin/:id',async(req,res)=>{
+  const id = req.params.id
+  const filter= {_id: new ObjectId(id)}
+const updatedDoc ={
+$set:{
+  roll: 'admin'
+}
+}
+const result = await userCollection.updateOne(filter,updatedDoc)
+res.send(result)
+})
+
+// delete users 
+app.delete('/users/:email',async(req,res)=>{
+  const email = req.params.email
+  const query= {email: email}
+  const result = await userCollection.deleteOne(query)
+  res.send(result)
 })
 
 
