@@ -63,7 +63,11 @@ app.get('/users/admin/:email',async(req,res)=>{
 })
 
 
-
+//users api
+app.get('/users',async(req,res)=>{
+  const result = await userCollection.find().toArray()
+  res.send(result)
+})
 
 
 
