@@ -32,6 +32,7 @@ async function run() {
 
    //all database collection
    const userCollection = client.db("messManageDB").collection("users")
+   const mealCollection = client.db("messManageDB").collection("meals")
 
  //jwt related api
  app.post('/jwt',async(req,res)=>{
@@ -116,7 +117,12 @@ app.get('/users',async(req,res)=>{
   res.send(result)
 })
 
-
+//add meal by admin
+ app.post('/meals',async(req,res)=>{
+  const meal = req.body
+  const result = await mealCollection.insertOne(meal)
+  res.send(result)
+ })
 
 
 
