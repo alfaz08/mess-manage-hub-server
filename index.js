@@ -155,7 +155,7 @@ app.get('/users',async(req,res)=>{
     const filter= {email: email}
   const updatedDoc ={
   $set:{
-    roll: 'premium'
+    type: 'premium'
   }
   }
   const result = await userCollection.updateOne(filter,updatedDoc)
