@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const port = process.env.PORT || 5000
 
 require('dotenv').config()
+const stripe =require('stripe')(process.env.STRIPE_SECRET_KEY)
 //middleware
 app.use(cors())
 app.use(express.json())
@@ -33,6 +34,7 @@ async function run() {
    //all database collection
    const userCollection = client.db("messManageDB").collection("users")
    const mealCollection = client.db("messManageDB").collection("meals")
+    const paymentCollection = client.db("messManageDB").collection("payments")
 
  //jwt related api
  app.post('/jwt',async(req,res)=>{
@@ -123,6 +125,47 @@ app.get('/users',async(req,res)=>{
   const result = await mealCollection.insertOne(meal)
   res.send(result)
  })
+
+
+ //vendor shop payment 
+  app.post('/member-payment',async(req,res)=>{
+    const {price} = req.body;
+    const amount = parseFloat(price *100)
+
+    const paymentIntent= await stripe.paymentIntents.create({
+      amount:amount,
+      currency: 'usd',
+      payment_method_types: ['card']
+    })
+    res.send({
+      clientSecret: paymentIntent.client_secret
+    })
+  })
+
+  //vendor payment store in database
+
+  app.post('/memberPayments',async(req,res)=>{
+    const payment =req.body
+    const result = await paymentCollection.insertOne(payment)
+    res.send(result)
+  })
+  //after payment membership upgrade of vendor
+  app.patch('/member/:email',async(req,res)=>{
+    const email = req.params.email
+    const filter= {email: email}
+  const updatedDoc ={
+  $set:{
+    roll: 'premium'
+  }
+  }
+  const result = await userCollection.updateOne(filter,updatedDoc)
+  res.send(result)
+  })
+
+
+
+
+
 
 
 
