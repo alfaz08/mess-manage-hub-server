@@ -35,6 +35,7 @@ async function run() {
    const userCollection = client.db("messManageDB").collection("users")
    const mealCollection = client.db("messManageDB").collection("meals")
     const paymentCollection = client.db("messManageDB").collection("payments")
+    const bazarBookedCollection = client.db("messManageDB").collection("books")
 
  //jwt related api
  app.post('/jwt',async(req,res)=>{
@@ -176,9 +177,35 @@ app.get('/users',async(req,res)=>{
     }
   });
 
+  //bazar booked collection api
+  
+  //vendor payment store in database
 
+  app.post('/bazarBooked',async(req,res)=>{
+    const booked=req.body
+    const result = await bazarBookedCollection.insertOne(booked)
+    res.send(result)
+  })
+  // //after booked bazar date user bazar update yes
+  app.patch('/member/bazar/:email',async(req,res)=>{
+    const email = req.params.email
+    const filter= {email: email}
+  const updatedDoc ={
+  $set:{
+    bazar: 'yes'
+  }
+  }
+  const result = await userCollection.updateOne(filter,updatedDoc)
+  res.send(result)
+  })
 
+  //get the all data of bazar booking list
 
+  app.get('/books',async(req,res)=>{
+    const result =await bazarBookedCollection.find().toArray()
+    res.send(result)
+
+  })
 
 
 
