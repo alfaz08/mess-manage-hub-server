@@ -162,6 +162,19 @@ app.get('/users',async(req,res)=>{
   res.send(result)
   })
 
+  //individual data find
+   app.get('/users/info', async (req, res) => {
+    try {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await userCollection.find(query).toArray();
+      console.log(result);
+      res.send(result);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+  });
 
 
 
