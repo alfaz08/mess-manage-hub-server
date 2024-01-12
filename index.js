@@ -189,10 +189,12 @@ app.get('/users',async(req,res)=>{
   // //after booked bazar date user bazar update yes
   app.patch('/member/bazar/:email',async(req,res)=>{
     const email = req.params.email
+    const bookingDate = req.body.bookingDate
     const filter= {email: email}
   const updatedDoc ={
   $set:{
-    bazar: 'yes'
+    bazar: 'yes',
+    bookingDate: bookingDate,
   }
   }
   const result = await userCollection.updateOne(filter,updatedDoc)
