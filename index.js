@@ -225,6 +225,21 @@ app.get('/users',async(req,res)=>{
     res.send(result)
    })
 
+  //all bazar api
+  //users api
+app.get('/bazar',async(req,res)=>{
+  const result = await bazarCollection.find().toArray()
+  res.send(result)
+})
+//all meal api
+app.get('/meals',async(req,res)=>{
+  const result = await bazarCollection.find().toArray()
+  res.send(result)
+})
+
+
+
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
