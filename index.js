@@ -36,6 +36,7 @@ async function run() {
    const mealCollection = client.db("messManageDB").collection("meals")
     const paymentCollection = client.db("messManageDB").collection("payments")
     const bazarBookedCollection = client.db("messManageDB").collection("books")
+    const bazarCollection= client.db("messManageDB").collection("bazar")
 
  //jwt related api
  app.post('/jwt',async(req,res)=>{
@@ -210,7 +211,12 @@ app.get('/users',async(req,res)=>{
   })
 
 
-
+   //bazar list stored in db
+   app.post('/bazar',async(req,res)=>{
+    const bazar = req.body
+    const result = await bazarCollection.insertOne(bazar)
+    res.send(result)
+   })
 
 
     // Send a ping to confirm a successful connection
