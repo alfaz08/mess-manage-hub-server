@@ -233,11 +233,18 @@ app.get('/bazar',async(req,res)=>{
 })
 //all meal api
 app.get('/meals',async(req,res)=>{
-  const result = await bazarCollection.find().toArray()
+  const result = await mealCollection.find().toArray()
   res.send(result)
 })
 
-
+ //delete meal from bazar booking list
+ app.delete('/allMeal/:id',verifyToken,async(req,res)=>{
+  const id= req.params.id
+  const query= {_id: new ObjectId(id)}
+  console.log(query);
+  const result = await mealCollection.deleteOne(query)
+  res.send(result)
+})
 
 
 
