@@ -209,7 +209,14 @@ app.get('/users',async(req,res)=>{
     res.send(result)
 
   })
-
+  
+  //delete from bazar booking list
+  app.delete('/bazarBooking/:email',verifyToken,async(req,res)=>{
+    const email = req.params.email
+    const query= {email: email}
+    const result = await bazarBookedCollection.deleteOne(query)
+    res.send(result)
+  })
 
    //bazar list stored in db
    app.post('/bazar',async(req,res)=>{
