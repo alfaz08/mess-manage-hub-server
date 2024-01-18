@@ -37,6 +37,7 @@ async function run() {
     const paymentCollection = client.db("messManageDB").collection("payments")
     const bazarBookedCollection = client.db("messManageDB").collection("books")
     const bazarCollection= client.db("messManageDB").collection("bazar")
+    const announcementCollection= client.db("messManageDB").collection("announcement")
 
  //jwt related api
  app.post('/jwt',async(req,res)=>{
@@ -244,7 +245,35 @@ app.get('/meals',async(req,res)=>{
   console.log(query);
   const result = await mealCollection.deleteOne(query)
   res.send(result)
+
 })
+
+//announcement api
+
+ app.post('/announcements',async(req,res)=>{
+  const announcement = req.body
+  const result = await announcementCollection.insertOne(announcement)
+  res.send(result)
+ })
+
+ app.get('/announcements',async(req,res)=>{
+  const result = await announcementCollection.find().toArray()
+  res.send(result)
+ })
+
+ //delete announcement
+ app.delete('/announcements/:id',verifyToken,async(req,res)=>{
+  const id= req.params.id
+  const query= {_id: new ObjectId(id)}
+  
+  const result = await announcementCollection.deleteOne(query)
+  res.send(result)
+
+})
+
+
+
+
 
 
 
