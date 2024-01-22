@@ -272,6 +272,17 @@ app.get('/meals',async(req,res)=>{
 })
 
 
+  //get user payment api
+   //get customer payment history from db
+
+  app.get('/userDeposit/:email',async(req,res)=>{
+    const query = {email: req.params.email}
+
+    
+    
+    const result = await paymentCollection.find(query).toArray()
+    res.send(result)
+  })
 
 
 
