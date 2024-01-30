@@ -38,6 +38,7 @@ async function run() {
     const bazarBookedCollection = client.db("messManageDB").collection("books")
     const bazarCollection= client.db("messManageDB").collection("bazar")
     const announcementCollection= client.db("messManageDB").collection("announcement")
+    const bookMealCollection= client.db("messManageDB").collection("mealBookList")
 
  //jwt related api
  app.post('/jwt',async(req,res)=>{
@@ -291,6 +292,17 @@ app.get('/meals',async(req,res)=>{
     res.send(result)
   })
   
+
+
+  //book meal by members api
+
+  app.post('/bookMeal',async(req,res)=>{
+    const meal = req.body
+    const result = await bookMealCollection.insertOne(meal)
+    res.send(result)
+   })
+
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
