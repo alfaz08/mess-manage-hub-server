@@ -285,8 +285,12 @@ app.get('/meals',async(req,res)=>{
   })
 
 
-
-
+  //user total payment list by admin
+  app.get('/paymentList',async(req,res)=>{
+    const result = await paymentCollection.find().toArray()
+    res.send(result)
+  })
+  
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
