@@ -204,6 +204,9 @@ app.get('/users',async(req,res)=>{
   res.send(result)
   })
 
+
+
+  
   //get the all data of bazar booking list
 
   app.get('/books',async(req,res)=>{
@@ -235,7 +238,7 @@ app.get('/bazar',async(req,res)=>{
 })
 //all meal api
 app.get('/meals',async(req,res)=>{
-  const result = await mealCollection.find().toArray()
+  const result = await mealCollection.find().sort({date: 1}).toArray()
   res.send(result)
 })
 
@@ -301,6 +304,39 @@ app.get('/meals',async(req,res)=>{
     const result = await bookMealCollection.insertOne(meal)
     res.send(result)
    })
+ 
+   //get book meal of individual users
+
+   app.get('/userBookMeal/:email',async(req,res)=>{
+    const query = {email: req.params.email}
+    const result = await bookMealCollection.find(query).toArray()
+    res.send(result)
+  })
+
+  //get all meal for admin
+  app.get('/totalBookMeal',async(req,res)=>{
+   
+    const result = await bookMealCollection.find().sort({mealDate:1}).toArray()
+    res.send(result)
+  })
+
+
+ 
+  // make membership normal after end of every month
+  app.patch('/bazarCancel/:email',async(req,res)=>{
+    const email = req.params.email
+    const filter= {email: email}
+    console.log(filter);
+  const updatedDoc ={
+  $set:{
+    bazar: 'no',
+    bookingDate: ''
+  }
+  }
+  const result = await userCollection.updateOne(filter,updatedDoc)
+  console.log(result);
+  res.send(result)
+  })
 
 
 
