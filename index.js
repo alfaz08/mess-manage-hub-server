@@ -338,6 +338,71 @@ app.get('/meals',async(req,res)=>{
   res.send(result)
   })
 
+  //admin pr analytics for admin
+   
+
+app.get('/admin-stats', verifyToken,async (req, res) => {
+  try {
+    const usersCount = await userCollection.countDocuments({ roll: 'member' });
+    const adminCount = await userCollection.countDocuments({ roll: 'admin' });
+
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1; 
+
+const meals = await mealCollection.find().toArray();
+const payments = await paymentCollection.find().toArray()
+
+
+const mealsThisMonth = meals.filter(meal => {
+    const mealDate = new Date(meal.date);
+    return mealDate.getMonth() + 1 === currentMonth;
+});
+
+const totalMealsThisMonth = mealsThisMonth.reduce((total, meal) => total + meal.totalMeal, 0);
+
+
+const paymentsThisMonth = payments.filter(payment => {
+    const paymentDate = new Date(payment.date);
+    return paymentDate.getMonth() + 1 === currentMonth;
+});
+
+const totalPaymentThisMonth = paymentsThisMonth.reduce((total, payment) => total + payment.price, 0);
+
+const mealRateThisMonth = parseFloat(totalPaymentThisMonth / totalMealsThisMonth).toFixed(3);
+
+const breakfastThisMonth = mealsThisMonth?.filter(user =>
+  user?.time?.includes("breakfast"));
+
+const breakfastMealsThisMonth = breakfastThisMonth.reduce((total, meal) => total + meal.totalMeal, 0);
+const lunchThisMonth = mealsThisMonth?.filter(user =>
+  user?.time?.includes("lunch"));
+
+const lunchMealsThisMonth = lunchThisMonth.reduce((total, meal) => total + meal.totalMeal, 0);
+const dinnerThisMonth = mealsThisMonth?.filter(user =>
+  user?.time?.includes("dinner"));
+
+const dinnerMealsThisMonth = dinnerThisMonth.reduce((total, meal) => total + meal.totalMeal, 0);
+
+
+    res.send({
+      usersCount,
+      adminCount,
+      totalMealsThisMonth,
+      totalPaymentThisMonth,
+      mealRateThisMonth,
+      breakfastMealsThisMonth,
+      dinnerMealsThisMonth,
+      lunchMealsThisMonth
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
+
 
 
     // Send a ping to confirm a successful connection
